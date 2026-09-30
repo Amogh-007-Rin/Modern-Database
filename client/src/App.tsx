@@ -1,10 +1,15 @@
-function App() {
+import { Button } from "./components/ui/button";
 
-  return(
-    <main className="h-screen w-full bg-zinc-900">
-      Home Page
+function App() {
+  return (
+    <main className="h-screen w-full bg-black flex items-center justify-center">
+      <Button onClick={checkLog}>Click</Button>
     </main>
   );
+}
+
+function checkLog() {
+  console.log("Button Clicked");
 }
 
 export default App;
