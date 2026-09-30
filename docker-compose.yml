@@ -19,9 +19,10 @@ services:
       # Database connection details
       ME_CONFIG_MONGODB_ADMINUSERNAME: enjin
       ME_CONFIG_MONGODB_ADMINPASSWORD: google
-      ME_CONFIG_MONGODB_SERVER: mongodb
+      # The name of should be same as the database name (mongodb)
+      ME_CONFIG_MONGODB_SERVER: mongodb 
       
-      # Browser web interface login details (Change these to whatever you want)
+      # Browser web interface login details
       ME_CONFIG_BASICAUTH_USERNAME: enjin
       ME_CONFIG_BASICAUTH_PASSWORD: google
     depends_on:
