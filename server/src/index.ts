@@ -17,7 +17,7 @@ async function startServer(): Promise<void> {
       }),
     )
     .use(authRouter)
-    .get("/", () => "Hello Elysia")
+    .get("/health", () => "Server is running")
     .listen(3000);
 
   console.log(
