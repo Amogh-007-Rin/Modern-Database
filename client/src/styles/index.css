@@ -5,6 +5,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* View Transitions theme wave: disable the default cross-fade so the
+   JS-driven clip-path sweep on ::view-transition-new(root) runs cleanly. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
 :root {
   --text: #6b6375;
   --text-h: #08060d;

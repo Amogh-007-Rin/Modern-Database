@@ -8,16 +8,24 @@ import {
   useState,
   type ReactNode,
 } from "react"
+import { flushSync } from "react-dom"
 
 type Theme = "light" | "dark"
 
+export interface ThemeToggleOrigin {
+  x: number
+  y: number
+}
+
 interface ThemeContextValue {
   theme: Theme
-  toggleTheme: () => void
+  toggleTheme: (origin?: ThemeToggleOrigin) => void
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null)
 const STORAGE_KEY = "theme"
+const WAVE_DURATION_MS = 550
+const WAVE_EASING = "cubic-bezier(0.4, 0, 0.2, 1)"
 
 function getInitialTheme(): Theme {
   if (typeof window === "undefined") return "light"
@@ -28,6 +36,21 @@ function getInitialTheme(): Theme {
     : "light"
 }
 
+function prefersReducedMotion(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  )
+}
+
+function supportsViewTransitions(): boolean {
+  return (
+    typeof document !== "undefined" &&
+    "startViewTransition" in document &&
+    typeof document.startViewTransition === "function"
+  )
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>(getInitialTheme)
 
@@ -36,13 +59,52 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     window.localStorage.setItem(STORAGE_KEY, theme)
   }, [theme])
 
-  const toggleTheme = useCallback(() => {
-    setTheme((previous) => (previous === "dark" ? "light" : "dark"))
-  }, [])
+  const toggleTheme = useCallback(
+    (origin?: ThemeToggleOrigin) => {
+      const next: Theme = theme === "dark" ? "light" : "dark"
+
+      if (prefersReducedMotion() || !supportsViewTransitions()) {
+        setTheme(next)
+        return
+      }
+
+      const x = origin?.x ?? window.innerWidth / 2
+      const y = origin?.y ?? window.innerHeight / 2
+      const endRadius = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y),
+      )
+
+      const transition = document.startViewTransition(() => {
+        flushSync(() => {
+          setTheme(next)
+        })
+      })
+
+      transition.ready.then(() => {
+        document.documentElement.animate(
+          {
+            clipPath: [
+              `circle(0px at ${x}px ${y}px)`,
+              `circle(${endRadius}px at ${x}px ${y}px)`,
+            ],
+          },
+          {
+            duration: WAVE_DURATION_MS,
+            easing: WAVE_EASING,
+            pseudoElement: "::view-transition-new(root)",
+          },
+        )
+      })
+    },
+    [theme],
+  )
 
   const value = useMemo(() => ({ theme, toggleTheme }), [theme, toggleTheme])
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+  return (
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+  )
 }
 
 export function useTheme(): ThemeContextValue {
