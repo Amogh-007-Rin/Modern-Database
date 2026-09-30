@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { AuthLayout } from "@/features/auth/components/AuthLayout"
+import { OAuthButtons } from "@/features/auth/components/OAuthButtons"
 import {
   getApiErrorMessage,
   getNameError,
@@ -102,6 +103,7 @@ export function SignupPage() {
             "Sign up"
           )}
         </Button>
+        <OAuthButtons />
         <p className="text-sm text-muted-foreground">
           Already have an account?{" "}
           <Link
