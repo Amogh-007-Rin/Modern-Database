@@ -1,15 +1,8 @@
-import { Button } from "./components/ui/button";
+import { RouterProvider } from "react-router"
+import { router } from "@/routes/router"
 
 function App() {
-  return (
-    <main className="h-screen w-full bg-black flex items-center justify-center">
-      <Button onClick={checkLog}>Click</Button>
-    </main>
-  );
+  return <RouterProvider router={router} />
 }
 
-function checkLog() {
-  console.log("Button Clicked");
-}
-
-export default App;
+export default App
