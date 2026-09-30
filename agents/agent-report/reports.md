@@ -1,0 +1,1 @@
+// Any AI-Agent making any changes in this project should mention the all the elements it changed and what will be the result of the change. Track WHY, WHAT, HOW to keep the agenet-assisted development clean, trackable and well maintained. 
