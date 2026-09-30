@@ -1,0 +1,4 @@
+# Backstop ignores (per-package .gitignore files cover the rest).
+**/.env
+.DS_Store
+*.log
