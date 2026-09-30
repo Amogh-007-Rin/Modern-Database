@@ -1,8 +1,8 @@
-export interface loggerSchema{
-    totalRequestCount: {type: number, required: true}
-};
+export interface Logger {
+  totalRequestCount: number;
+}
 
-export interface userSchema {
+export interface User {
   name: string;
   email: string;
-};
+}
