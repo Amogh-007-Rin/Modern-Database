@@ -196,15 +196,21 @@ export const authRouter = new Elysia({ prefix: "/auth" })
       return redirect(createAuthorizationUrl(params.provider, state));
     } catch (error) {
       console.error("Unable to start OAuth login:", error);
-      return status(503, {
-        success: false,
-        error: "OAuth provider is not configured.",
-      });
+      return redirect(
+        `${config.webUrl}/login?error=${params.provider}_not_configured`,
+      );
     }
   })
   .get(
     "/:provider/callback",
-    async ({ params, query, cookie: { oauth_state, session }, jwt, status }) => {
+    async ({
+      params,
+      query,
+      cookie: { oauth_state, session },
+      jwt,
+      redirect,
+      status,
+    }) => {
       if (!isOAuthProvider(params.provider)) {
         return status(404, { success: false, error: "OAuth provider not found." });
       }
@@ -213,10 +219,7 @@ export const authRouter = new Elysia({ prefix: "/auth" })
       clearCookie(oauth_state);
 
       if (query.error) {
-        return status(400, {
-          success: false,
-          error: "OAuth login was cancelled or denied.",
-        });
+        return redirect(`${config.webUrl}/login?error=oauth_cancelled`);
       }
 
       if (
@@ -225,7 +228,7 @@ export const authRouter = new Elysia({ prefix: "/auth" })
         typeof storedState !== "string" ||
         storedState !== query.state
       ) {
-        return status(400, { success: false, error: "Invalid OAuth state." });
+        return redirect(`${config.webUrl}/login?error=oauth_invalid`);
       }
 
       try {
@@ -235,13 +238,10 @@ export const authRouter = new Elysia({ prefix: "/auth" })
 
         setSessionCookie(session, token);
 
-        return { success: true, user: toPublicUser(user) };
+        return redirect(config.webUrl);
       } catch (error) {
         console.error("OAuth login failed:", error);
-        return status(401, {
-          success: false,
-          error: "Unable to authenticate with OAuth provider.",
-        });
+        return redirect(`${config.webUrl}/login?error=oauth_failed`);
       }
     },
     {

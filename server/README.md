@@ -38,8 +38,8 @@ generic API response, so account existence can't be probed.
 
 - `POST /auth/signup` — create a password account and receive an HTTP-only JWT cookie.
 - `POST /auth/login` — sign in with email and password.
-- `GET /auth/google`, `GET /auth/github`, `GET /auth/discord` — begin OAuth sign-in.
-- `GET /auth/:provider/callback` — provider callback endpoint.
+- `GET /auth/google`, `GET /auth/github`, `GET /auth/discord` — begin OAuth sign-in (browser redirect; redirects back to the client login with `?error=` if the provider isn't configured).
+- `GET /auth/:provider/callback` — provider callback endpoint. Sets the session cookie and redirects to the client on success, or to the client login with `?error=oauth_cancelled|oauth_invalid|oauth_failed` on failure.
 - `GET /auth/me` — retrieve the current user using the session cookie or a Bearer JWT.
 - `POST /auth/logout` — clear the session cookie.
 - `POST /auth/forgot-password` — request a password reset token (1h expiry, generic response to avoid email enumeration; raw `resetToken` is returned only outside production for local testing).
