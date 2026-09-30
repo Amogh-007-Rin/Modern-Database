@@ -1,0 +1,14 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb-database
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: enjin
+      MONGO_INITDB_ROOT_PASSWORD: google
+
+volumes:
+  mongo_data:
