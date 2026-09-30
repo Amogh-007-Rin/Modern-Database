@@ -6,11 +6,15 @@
     "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
+    "@elysia/jwt": "^1.4.2",
+    "@elysiajs/cors": "^1.4.2",
     "@types/mongoose": "^5.11.97",
     "elysia": "latest",
-    "mongoose": "^9.10.3"
+    "mongoose": "^9.10.3",
+    "nodemailer": "^10.0.13"
   },
   "devDependencies": {
+    "@types/nodemailer": "^8.0.2",
     "bun-types": "latest"
   },
   "module": "src/index.js"

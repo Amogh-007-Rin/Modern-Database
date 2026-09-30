@@ -1,50 +1,27 @@
+import { cors } from "@elysiajs/cors";
 import { Elysia } from "elysia";
 import { connectDB } from "./db/db";
-import { UserModel } from "./db/model";
-
-let counter = 0;
-
-function requestLog(): void {
-  counter += 1;
-  console.log(`request count: ${counter}`);
-}
-
-function hello(): string {
-  requestLog();
-  return "Hello";
-}
-
-
-async function createUser() {
-  const user = await UserModel.create({
-    name: "Random",
-    // Email is unique in the schema, so every demonstration request needs a
-    // distinct value instead of reusing one that fails after the first call.
-    email: `random-${crypto.randomUUID()}@example.com`
-  });
-
-  console.log("User created successfully:", user);
-
-  return {
-    id: user.id,
-    name: user.name,
-    email: user.email
-  };
-}
-
-
+import { config } from "./lib/config";
+import { authRouter } from "./routes/auth/authRouter";
 
 async function startServer(): Promise<void> {
+  // Awaiting For Database Connection
   await connectDB();
 
   const app = new Elysia()
+    .use(
+      cors({
+        origin: config.clientOrigins,
+        credentials: true,
+        allowedHeaders: ["Content-Type", "Authorization"],
+      }),
+    )
+    .use(authRouter)
     .get("/", () => "Hello Elysia")
-    .get("/hello", hello)
-    .get("/user", createUser)
     .listen(3000);
 
   console.log(
-    `🦊 Server is running at ${app.server?.hostname}:${app.server?.port}`
+    `🦊 Server is running at ${app.server?.hostname}:${app.server?.port}`,
   );
 }
 
