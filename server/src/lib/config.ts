@@ -1,0 +1,1 @@
+export const connectionString = process.env.DATABASE_URL || "mongodb://root:example_password@localhost:27017/mydatabase?authSource=admin";
